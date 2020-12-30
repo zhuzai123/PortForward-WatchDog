@@ -1,0 +1,104 @@
+{
+  "result": [
+    {
+      "id": "cc5a32d4ad1ac34271c414c351d5e1e1",
+      "name": "hehouzhu.xyz",
+      "status": "active",
+      "paused": false,
+      "type": "full",
+      "development_mode": 0,
+      "name_servers": [ "amalia.ns.cloudflare.com", "nico.ns.cloudflare.com" ],
+      "original_name_servers": [ "dns7.hichina.com", "dns8.hichina.com" ],
+      "original_registrar": null,
+      "original_dnshost": null,
+      "modified_on": "2020-12-22T10:46:35.229600Z",
+      "created_on": "2020-12-22T10:29:22.594231Z",
+      "activated_on": "2020-12-22T10:46:35.229600Z",
+      "meta": {
+        "step": 2,
+        "wildcard_proxiable": false,
+        "custom_certificate_quota": 0,
+        "page_rule_quota": 3,
+        "phishing_detected": false,
+        "multiple_railguns_allowed": false
+      },
+      "owner": {
+        "id": "305e3d68825b3bb283337ca4bc6eb4f0",
+        "type": "user",
+        "email": "849513883@qq.com"
+      },
+      "account": {
+        "id": "dcebfa07f11bb32b0cc9122bc981c162",
+        "name": "849513883@qq.com"
+      },
+      "permissions": [ "#access:edit", "#access:read", "#analytics:read", "#app:edit", "#auditlogs:read", "#billing:edit", "#billing:read", "#cache_purge:edit", "#dns_records:edit", "#dns_records:read", "#lb:edit", "#lb:read", "#legal:edit", "#legal:read", "#logs:edit", "#logs:read", "#member:edit", "#member:read", "#organization:edit", "#organization:read", "#ssl:edit", "#ssl:read", "#stream:edit", "#stream:read", "#subscription:edit", "#subscription:read", "#teams:edit", "#teams:read", "#teams:report", "#waf:edit", "#waf:read", "#webhooks:edit", "#webhooks:read", "#worker:edit", "#worker:read", "#zone:edit", "#zone:read", "#zone_settings:edit", "#zone_settings:read" ],
+      "plan": {
+        "id": "0feeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "name": "Free Website",
+        "price": 0,
+        "currency": "USD",
+        "frequency": "",
+        "is_subscribed": false,
+        "can_subscribe": false,
+        "legacy_id": "free",
+        "legacy_discount": false,
+        "externally_managed": false
+      }
+    },
+    {
+      "id": "822dc3b558f47afd21e1e0a33f76ee14",
+      "name": "importal.club",
+      "status": "active",
+      "paused": false,
+      "type": "full",
+      "development_mode": -12360274,
+      "name_servers": [ "amalia.ns.cloudflare.com", "nico.ns.cloudflare.com" ],
+      "original_name_servers": [ "ns03.domaincontrol.com", "ns04.domaincontrol.com" ],
+      "original_registrar": "godaddy.com, inc. (id: 146)",
+      "original_dnshost": null,
+      "modified_on": "2020-09-28T07:47:00.528145Z",
+      "created_on": "2020-02-12T15:48:57.732149Z",
+      "activated_on": "2020-02-12T16:17:52.186214Z",
+      "meta": {
+        "step": 2,
+        "wildcard_proxiable": false,
+        "custom_certificate_quota": 0,
+        "page_rule_quota": 3,
+        "phishing_detected": false,
+        "multiple_railguns_allowed": false
+      },
+      "owner": {
+        "id": "305e3d68825b3bb283337ca4bc6eb4f0",
+        "type": "user",
+        "email": "849513883@qq.com"
+      },
+      "account": {
+        "id": "dcebfa07f11bb32b0cc9122bc981c162",
+        "name": "849513883@qq.com"
+      },
+      "permissions": [ "#access:edit", "#access:read", "#analytics:read", "#app:edit", "#auditlogs:read", "#billing:edit", "#billing:read", "#cache_purge:edit", "#dns_records:edit", "#dns_records:read", "#lb:edit", "#lb:read", "#legal:edit", "#legal:read", "#logs:edit", "#logs:read", "#member:edit", "#member:read", "#organization:edit", "#organization:read", "#ssl:edit", "#ssl:read", "#stream:edit", "#stream:read", "#subscription:edit", "#subscription:read", "#teams:edit", "#teams:read", "#teams:report", "#waf:edit", "#waf:read", "#webhooks:edit", "#webhooks:read", "#worker:edit", "#worker:read", "#zone:edit", "#zone:read", "#zone_settings:edit", "#zone_settings:read" ],
+      "plan": {
+        "id": "0feeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "name": "Free Website",
+        "price": 0,
+        "currency": "USD",
+        "frequency": "",
+        "is_subscribed": false,
+        "can_subscribe": false,
+        "legacy_id": "free",
+        "legacy_discount": false,
+        "externally_managed": false
+      }
+    }
+  ],
+  "result_info": {
+    "page": 1,
+    "per_page": 20,
+    "total_pages": 1,
+    "count": 2,
+    "total_count": 2
+  },
+  "success": true,
+  "errors": [],
+  "messages": []
+}
