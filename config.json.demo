@@ -22,6 +22,7 @@
           "port": 443,
         }
       ],
+      "timeout": 1,
       "check_interval": 15,
       "error_times": 4,
       "error_recheck_interval": 2,

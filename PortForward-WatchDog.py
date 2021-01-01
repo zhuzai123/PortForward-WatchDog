@@ -27,7 +27,7 @@ def get_configuration():
         target[target_num]['cname_address'].sort(key=lambda m: m['metric'])
         target[target_num]['check_interval'] = target[target_num].get('check_interval', 60) # Default check_interval
         target[target_num]['timeout'] = target[target_num].get('timeout', 2) # Default timeout
-        target[target_num]['error_times'] = target[target_num].get('error_times', 2) # Default error_times
+        target[target_num]['error_times'] = target[target_num].get('error_times', 3) # Default error_times
         target[target_num]['error_recheck_interval'] = target[target_num].get('error_recheck_interval', 3) # Default error_recheck_interval
         for cname_num in range(len(target[target_num]['cname_address'])):
             target[target_num]['cname_address'][cname_num]['metric'] = \
