@@ -52,7 +52,7 @@ def start(trd_num, target, proxies):
                 if cname['method'] == 'tcp':
                     accessable, ip, latency = check_port(cname['address'], cname['method'], cname['port'], target['timeout'])
                     print(log_prefix + cname['address'] + '(' + ip + '):' + str(cname['port']) + ' ', end='')
-                    print('latancy: ' + str(latency) + 'ms.' if accessable else 'inaccessable. Retry: ' + str(times + 1))
+                    print('latancy: ' + str(latency) + 'ms.' if accessable else 'inaccessable. Retry: ' + str(times + 1) + '.')
                 elif cname['method'] == 'icmp':
                     pass
                 if accessable == 1:
@@ -110,9 +110,9 @@ def update(forward_address, cname_addess, api, proxies):
             return '\nFailed to update ' + forward_address + ' to ' + cname_addess + ' through ' + api['provider'] + '. Result:\n' + str(res) + '\n'
 
     except Exception as e:
-        template = 'Error type: {0}.\nArguments:{1!r}'
+        template = 'Error type: {0}.\nArguments: {1!r}.'
         err_message = template.format(type(e).__name__, e.args)
-        return '\nFailed to call ' + 'api. Result:\n' + err_message + '\n'
+        return '\nFailed to call ' + 'api. Result:\n' + err_message + '.\n'
     except:
         pass
 
