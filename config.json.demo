@@ -1,0 +1,65 @@
+{
+  "target": [
+    {
+      "name": "forward-1",
+      "forward_address": "forward-1@domain-1.com",
+      "cname_address": [
+        {
+          "address": "cname-1.domain-1.com",
+          "method": "tcp",
+          "port": 443,
+          "metric": 20
+        },
+        {
+          "address": "cname-1.domain-2.com",
+          "method": "tcp",
+          "port": 443,
+          "metric": 50
+        },
+        {
+          "address": "cname-2.domain-2.com",
+          "method": "tcp",
+          "port": 443,
+        }
+      ],
+      "check_interval": 15,
+      "error_times": 4,
+      "error_recheck_interval": 2,
+      "api": {
+        "provider": "Cloudflare",
+        "endpoint": "https://api.cloudflare.com/client/v4",
+        "X-Auth-Email": "user1@mail.com",
+        "X-Auth-Key": "qwertyuiopasdfghjklzxcvbnm"
+      }
+    },
+    {
+      "name": "forward-2",
+      "forward_address": "forward-2@domain-2.com",
+      "cname_address": [
+        {
+          "address": "cname-a.domain-c.com",
+          "method": "tcp",
+          "port": 1080,
+          "metric": 10
+        },
+        {
+          "address": "cname-b.domain-d.com",
+          "method": "tcp",
+          "port": 1080,
+        }
+      ],
+      "error_recheck_interval": 1,
+      "api": {
+        "provider": "Cloudflare",
+        "X-Auth-Email": "user2@mail.com",
+        "X-Auth-Key": "mnbvcxzlkjhgfdsapoiuytrewq"
+      }
+    }
+  ],
+  "dns_server": "1.1.1.1",
+  "proxies": {
+    "http": "127.0.0.1:8080",
+    "https": "127.0.0.1:8080"
+  },
+  "debug": 0
+}
