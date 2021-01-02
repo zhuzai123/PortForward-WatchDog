@@ -106,7 +106,7 @@ def update(forward_address, cname_addess, api, proxies):
         res = 'No api in config.'
         if api['provider'] == 'Cloudflare':
             need_to_update, success, res ,api = cloudflare_api(api, forward_address, cname_addess)
-
+        #print(str(need_to_update) + str(success))
         if need_to_update == success == 1:
             return api, '\nUpdate ' + forward_address + ' to ' + cname_addess + ' through ' + api['provider'] + ' successfully. Result:\n' + str(res) + '\n'
         elif need_to_update == 1:
@@ -139,7 +139,7 @@ def cloudflare_api(api, forward_address, cname_addess):
             if forward_address.split('@', 1)[1] == zones['name']:
                 api['zone_id'] = zones['id']
 
-    res = requests.get(api['endpoint'] + '/zones/' + api['zone_id'] + '/dns_records', headers=headers, proxies=proxies)
+    res = requests.get(api['endpoint'] + '/zones/' + api['zone_id'] + '/dns_records?per_page=100', headers=headers, proxies=proxies)
     res = json.loads(res.content.decode('utf-8','ignore'))
     for dns_record in res['result']:
         if (dns_record['name'] == forward_address.replace('@', '.')) & (dns_record['type'] == 'CNAME'):
