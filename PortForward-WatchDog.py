@@ -139,14 +139,13 @@ def cloudflare_api(api, forward_address, cname_addess):
             if forward_address.split('@', 1)[1] == zones['name']:
                 api['zone_id'] = zones['id']
 
-    if api.get('dns_record_id', '') == '':
-        res = requests.get(api['endpoint'] + '/zones/' + api['zone_id'] + '/dns_records', headers=headers, proxies=proxies)
-        res = json.loads(res.content.decode('utf-8','ignore'))
-        for dns_record in res['result']:
-            if (dns_record['name'] == forward_address.replace('@', '.')) & (dns_record['type'] == 'CNAME'):
-                api['dns_record_id'] = dns_record['id']
-                api['dns_record_content'] = dns_record['content']
-                api['dns_record_ttl'] = dns_record['ttl']
+    res = requests.get(api['endpoint'] + '/zones/' + api['zone_id'] + '/dns_records', headers=headers, proxies=proxies)
+    res = json.loads(res.content.decode('utf-8','ignore'))
+    for dns_record in res['result']:
+        if (dns_record['name'] == forward_address.replace('@', '.')) & (dns_record['type'] == 'CNAME'):
+            api['dns_record_id'] = dns_record['id']
+            api['dns_record_content'] = dns_record['content']
+            api['dns_record_ttl'] = dns_record['ttl']
     if cname_addess == api['dns_record_content']:
         return False, True, res, api
     else:
