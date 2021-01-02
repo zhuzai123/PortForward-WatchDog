@@ -42,28 +42,28 @@ def get_configuration():
     return target, proxies
 
 def start(trd_num, target, proxies):
-    log_prefix = 'Thread NO.' + str(trd_num +1) + ' ' + target['name'] + ' '
-    print(log_prefix + 'Starting...\n')
-    print(log_prefix + 'config ' + '-' * 41 + '\n' + str(target) + '\n' + '-' * 60 + '\n')
-
+    log_prefix = lambda :time.strftime("%y-%m-%d %H:%M:%S", time.localtime()) + ' Thread NO.' + str(trd_num +1) + ' ' + target['name'] + ' '
+    print(log_prefix() + 'Starting...\n')
+    print(log_prefix() + 'config ' + '\n' + str(target) + '\n' + '-' * 60 + '\n')
+    target['api']['zone_id'] = target['api']['dns_record_id'] = ''
     while(1):
         for cname in target['cname_address']:
             for times in range(target['error_times']):
                 if cname['method'] == 'tcp':
                     accessable, ip, latency = check_port(cname['address'], cname['method'], cname['port'], target['timeout'])
-                    print(log_prefix + cname['address'] + '(' + ip + '):' + str(cname['port']) + ' ', end='')
+                    print(log_prefix() + cname['address'] + '(' + ip + '):' + str(cname['port']) + ' ', end='')
                     print('latancy: ' + str(latency) + 'ms.' if accessable else 'inaccessable. Retry: ' + str(times + 1) + '.')
                 elif cname['method'] == 'icmp':
                     pass
                 if accessable == 1:
-                    res = update(target['forward_address'], cname['address'], target['api'], proxies)
+                    target['api'], res = update(target['forward_address'], cname['address'], target['api'], proxies)
                     if res:
-                        print(log_prefix + res)
+                        print(log_prefix() + res)
                     break
                 time.sleep(target['error_recheck_interval'])
             if accessable == 1:
                 break
-        print(log_prefix + 'waiting ' + str(target['check_interval']) + ' second(s).')
+        print(log_prefix() + 'waiting ' + str(target['check_interval']) + ' second(s).')
         time.sleep(target['check_interval'])
 
 def check_port(address, method, port=65536, timeout=2):
@@ -102,63 +102,73 @@ def check_port(address, method, port=65536, timeout=2):
 
 def update(forward_address, cname_addess, api, proxies):
     try:
+        need_to_update = success = False
+        res = 'No api in config.'
         if api['provider'] == 'Cloudflare':
-            need_to_update, success, res = cloudflare_api(api['X-Auth-Email'], api['X-Auth-Key'], api.get('endpoint', ''), forward_address, cname_addess)
-        if success == 1:
-            return '\nUpdate ' + forward_address + ' to ' + cname_addess + ' through ' + api['provider'] + ' successfully. Result:\n' + str(res) + '\n'
+            need_to_update, success, res ,api = cloudflare_api(api, forward_address, cname_addess)
+
+        if need_to_update == success == 1:
+            return api, '\nUpdate ' + forward_address + ' to ' + cname_addess + ' through ' + api['provider'] + ' successfully. Result:\n' + str(res) + '\n'
         elif need_to_update == 1:
-            return '\nFailed to update ' + forward_address + ' to ' + cname_addess + ' through ' + api['provider'] + '. Result:\n' + str(res) + '\n'
+            return api, '\nFailed to update ' + forward_address + ' to ' + cname_addess + ' through ' + api['provider'] + '. Result:\n' + str(res) + '\n'
+        elif success == 1:
+            return api, ''
+        else:
+            return api, '\nFailed to check ' + forward_address + ' record through ' + api['provider'] + '. Result:\n' + str(res) + '\n'
 
     except Exception as e:
         template = 'Error type: {0}.\nArguments: {1!r}.'
         err_message = template.format(type(e).__name__, e.args)
-        return '\nFailed to call ' + 'api. Result:\n' + err_message + '.\n'
+        return api, '\nFailed to call ' + 'api. Result:\n' + err_message + '.\n'
     except:
         pass
 
-def cloudflare_api(email, key, url, forward_address, cname_addess):
-    if url == '':
-        url = 'https://api.cloudflare.com/client/v4'
+def cloudflare_api(api, forward_address, cname_addess):
+    res = ''
+    if api.get('endpoint', '') == '':
+        api['endpoint'] = 'https://api.cloudflare.com/client/v4'
     headers = {
-        'X-Auth-Email': email,
-        'X-Auth-Key': key,
+        'X-Auth-Email': api['X-Auth-Email'],
+        'X-Auth-Key': api['X-Auth-Key'],
         'Content-Type': 'application/json'
         }
-    res = requests.get(url + '/zones', headers=headers, proxies=proxies)
-    res = json.loads(res.content.decode('utf-8','ignore'))
-    for zones in res['result']:
-        if forward_address.split('@', 1)[1] == zones['name']:
-            zone_id = zones['id']
+    if api.get('zone_id', '') == '':
+        res = requests.get(api['endpoint'] + '/zones', headers=headers, proxies=proxies)
+        res = json.loads(res.content.decode('utf-8','ignore'))
+        for zones in res['result']:
+            if forward_address.split('@', 1)[1] == zones['name']:
+                api['zone_id'] = zones['id']
 
-    res = requests.get(url + '/zones/' + zone_id + '/dns_records', headers=headers, proxies=proxies)
-    res = json.loads(res.content.decode('utf-8','ignore'))
-    for dns_record in res['result']:
-        if (dns_record['name'] == forward_address.replace('@', '.')) & (dns_record['type'] == 'CNAME'):
-            dns_record_id = dns_record['id']
-            dns_record_content = dns_record['content']
-            dns_record_ttl = dns_record['ttl']
-    if cname_addess == dns_record_content:
-        return False, False, res
+    if api.get('dns_record_id', '') == '':
+        res = requests.get(api['endpoint'] + '/zones/' + api['zone_id'] + '/dns_records', headers=headers, proxies=proxies)
+        res = json.loads(res.content.decode('utf-8','ignore'))
+        for dns_record in res['result']:
+            if (dns_record['name'] == forward_address.replace('@', '.')) & (dns_record['type'] == 'CNAME'):
+                api['dns_record_id'] = dns_record['id']
+                api['dns_record_content'] = dns_record['content']
+                api['dns_record_ttl'] = dns_record['ttl']
+    if cname_addess == api['dns_record_content']:
+        return False, True, res, api
     else:
         data = {
             'type': 'CNAME',
             'name': forward_address.replace('@', '.'),
             'content': cname_addess,
-            'ttl': dns_record_ttl,
+            'ttl': api['dns_record_ttl'],
             'proxy': False
             }
         data = json.dumps(data)
-        res = requests.put(url + '/zones/' + zone_id + '/dns_records/' + dns_record_id, data=data, headers=headers, proxies=proxies)
+        res = requests.put(api['endpoint'] + '/zones/' + api['zone_id'] + '/dns_records/' + api['dns_record_id'], data=data, headers=headers, proxies=proxies)
         
         res = json.loads(res.content.decode('utf-8','ignore'))
-        return True, res['success'], res
+        return True, res['success'], res, api
 
 if __name__ == '__main__':
     try:
         while(1):
             time.sleep(1)
             target, proxies = get_configuration()
-            # THREADIND
+            # THREADING
             trd = []
             for target_num in range(len(target)):
                 trd.append(threading.Thread(target=start, args=(target_num, target[target_num], proxies,)))
