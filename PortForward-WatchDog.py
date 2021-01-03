@@ -101,27 +101,32 @@ def check_port(address, method, port=65536, timeout=2):
         return True, ip, 0
 
 def update(forward_address, cname_addess, api, proxies):
-    try:
-        need_to_update = success = False
-        res = 'No api in config.'
-        if api['provider'] == 'Cloudflare':
-            need_to_update, success, res ,api = cloudflare_api(api, forward_address, cname_addess)
-        #print(str(need_to_update) + str(success))
-        if need_to_update == success == 1:
-            return api, '\nUpdate ' + forward_address + ' to ' + cname_addess + ' through ' + api['provider'] + ' successfully. Result:\n' + str(res) + '\n'
-        elif need_to_update == 1:
-            return api, '\nFailed to update ' + forward_address + ' to ' + cname_addess + ' through ' + api['provider'] + '. Result:\n' + str(res) + '\n'
-        elif success == 1:
-            return api, ''
-        else:
-            return api, '\nFailed to check ' + forward_address + ' record through ' + api['provider'] + '. Result:\n' + str(res) + '\n'
+    except_times = 0
+    while(1):
+        try:
+            need_to_update = success = False
+            res = 'No api in config.'
+            if api['provider'] == 'Cloudflare':
+                need_to_update, success, res ,api = cloudflare_api(api, forward_address, cname_addess)
+            if need_to_update == success == 1:
+                return api, '\nUpdate ' + forward_address + ' to ' + cname_addess + ' through ' + api['provider'] + ' successfully. Result:\n' + str(res) + '\n'
+            elif need_to_update == 1:
+                return api, '\nFailed to update ' + forward_address + ' to ' + cname_addess + ' through ' + api['provider'] + '. Result:\n' + str(res) + '\n'
+            elif success == 1:
+                return api, ''
+            else:
+                return api, '\nFailed to check ' + forward_address + ' record through ' + api['provider'] + '. Result:\n' + str(res) + '\n'
 
-    except Exception as e:
-        template = 'Error type: {0}.\nArguments: {1!r}.'
-        err_message = template.format(type(e).__name__, e.args)
-        return api, '\nFailed to call ' + 'api. Result:\n' + err_message + '.\n'
-    except:
-        pass
+        except Exception as e:
+            template = 'Error type: {0}.\nArguments: {1!r}.'
+            err_message = template.format(type(e).__name__, e.args)
+            except_times = except_times + 1
+            if except_times < 2:
+                continue
+            else:
+                return api, '\nFailed to call api. Result:\n' + err_message + '.\n'
+        except:
+            pass
 
 def cloudflare_api(api, forward_address, cname_addess):
     res = ''
